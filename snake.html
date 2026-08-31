@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>贪吃蛇 · Luciffa Arcade</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: rgba(22, 29, 55, 0.84);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f5f7ff;
+      --muted: #a9b2d3;
+      --purple: #9b8cff;
+      --blue: #65d8ff;
+      --yellow: #ffd36b;
+      --red: #ff7f9e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, #272260 0, transparent 28rem),
+        radial-gradient(circle at 90% 20%, #123c63 0, transparent 26rem),
+        var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+    }
+
+    .logo span { color: var(--purple); }
+
+    .back {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .back:hover { color: var(--text); }
+
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      padding: 36px 0 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--yellow);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 7vw, 68px);
+      letter-spacing: -0.06em;
+    }
+
+    .heading p:last-child {
+      margin: 12px 0 0;
+      max-width: 560px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 18px;
+      padding-bottom: 70px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+
+    .board-panel { padding: 18px; }
+
+    canvas {
+      display: block;
+      width: min(100%, 480px);
+      margin: 0 auto;
+      border: 2px solid #93a0d4;
+      border-radius: 12px;
+      background: #101832;
+      image-rendering: pixelated;
+      touch-action: none;
+    }
+
+    .status {
+      min-height: 24px;
+      margin: 16px 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .side-panel { padding: 22px; }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .score {
+      display: block;
+      margin: 7px 0 4px;
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.06em;
+    }
+
+    .best {
+      margin: 0 0 28px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    button {
+      border: 0;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .actions {
+      display: grid;
+      gap: 9px;
+      margin-bottom: 22px;
+    }
+
+    .actions button,
+    .dpad button {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .actions button {
+      padding: 12px;
+      color: var(--muted);
+    }
+
+    .actions button:hover,
+    .dpad button:hover {
+      color: var(--text);
+      border-color: var(--purple);
+      background: rgba(155, 140, 255, 0.16);
+    }
+
+    .side-panel h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+
+    .dpad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .dpad button {
+      aspect-ratio: 1;
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .dpad .empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    footer {
+      padding: 24px 0 34px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      header { padding: 20px 0; }
+
+      .heading {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .game-layout { grid-template-columns: 1fr; }
+
+      .side-panel {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr;
+        gap: 18px;
+      }
+
+      .dpad {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+      }
+
+      .actions { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="index.html">luciffa<span>.</span></a>
+      <a class="back" href="index.html">← 返回游戏大厅</a>
+    </header>
+
+    <main>
+      <section class="heading">
+        <div>
+          <p class="eyebrow">02 · Arcade</p>
+          <h1>贪吃蛇</h1>
+          <p>吃掉金色食物，让小蛇不断成长。支持键盘方向键、WASD 和手机方向按钮。</p>
+        </div>
+      </section>
+
+      <section class="game-layout">
+        <article class="panel board-panel">
+          <canvas id="board" width="480" height="480"></canvas>
+          <div class="status" id="status">点击“开始游戏”或按方向键开始。</div>
+        </article>
+
+        <aside class="panel side-panel">
+          <div>
+            <div class="stat-label">得分</div>
+            <strong class="score" id="score">0</strong>
+            <p class="best">本机最高分：<strong id="best-score">0</strong></p>
+
+            <div class="actions">
+              <button id="start">开始游戏</button>
+              <button id="pause">暂停</button>
+              <button id="restart">重新开始</button>
+            </div>
+
+            <h2>控制方向</h2>
+          </div>
+
+          <div class="dpad">
+            <button class="empty">·</button>
+            <button data-direction="up">↑</button>
+            <button class="empty">·</button>
+            <button data-direction="left">←</button>
+            <button data-direction="down">↓</button>
+            <button data-direction="right">→</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer>© 2026 Luciffa Arcade · Made for play.</footer>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("board");
+    const ctx = canvas.getContext("2d");
+
+    const gridCount = 20;
+    const cellSize = canvas.width / gridCount;
+    const scoreElement = document.getElementById("score");
+    const bestScoreElement = document.getElementById("best-score");
+    const statusElement = document.getElementById("status");
+    const startButton = document.getElementById("start");
+    const pauseButton = document.getElementById("pause");
+
+    let snake;
+    let food;
+    let direction;
+    let nextDirection;
+    let score;
+    let bestScore = Number(localStorage.getItem("luciffaSnakeBest") || 0);
+    let running = false;
+    let paused = false;
+    let gameOver = false;
+    let loopId;
+
+    function setStatus(text) {
+      statusElement.textContent = text;
+    }
+
+    function updateHud() {
+      scoreElement.textContent = score;
+      bestScoreElement.textContent = bestScore;
+    }
+
+    function createFood() {
+      let nextFood;
+
+      do {
+        nextFood = {
+          x: Math.floor(Math.random() * gridCount),
+          y: Math.floor(Math.random() * gridCount)
+        };
+      } while (snake.some(part => part.x === nextFood.x && part.y === nextFood.y));
+
+      return nextFood;
+    }
+
+    function draw() {
+      ctx.fillStyle = "#101832";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= gridCount; i++) {
+        const position = i * cellSize;
+        ctx.beginPath();
+        ctx.moveTo(position, 0);
+        ctx.lineTo(position, canvas.height);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, position);
+        ctx.lineTo(canvas.width, position);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "#ffd36b";
+      ctx.beginPath();
+      ctx.arc(
+        food.x * cellSize + cellSize / 2,
+        food.y * cellSize + cellSize / 2,
+        cellSize * 0.28,
+        0,
+        Math.PI * 2
+      );
+      ctx.fill();
+
+      snake.forEach((part, index) => {
+        ctx.fillStyle = index === 0 ? "#65d8ff" : "#9b8cff";
+        ctx.fillRect(
+          part.x * cellSize + 3,
+          part.y * cellSize + 3,
+          cellSize - 6,
+          cellSize - 6
+        );
+      });
+    }
+
+    function resetGame(message = "点击“开始游戏”或按方向键开始。") {
+      clearInterval(loopId);
+
+      snake = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 }
+      ];
+
+      direction = { x: 1, y: 0 };
+      nextDirection = { x: 1, y: 0 };
+      food = createFood();
+      score = 0;
+      running = false;
+      paused = false;
+      gameOver = false;
+
+      startButton.textContent = "开始游戏";
+      pauseButton.textContent = "暂停";
+      updateHud();
+      draw();
+      setStatus(message);
+    }
+
+    function gameSpeed() {
+      return Math.max(70, 145 - Math.floor(score / 50) * 10);
+    }
+
+    function startLoop() {
+      clearInterval(loopId);
+      loopId = setInterval(tick, gameSpeed());
+    }
+
+    function startGame() {
+      if (gameOver) resetGame("");
+
+      if (running && !paused) return;
+
+      running = true;
+      paused = false;
+      startButton.textContent = "游戏进行中";
+      pauseButton.textContent = "暂停";
+      setStatus("吃掉金色食物。每 50 分速度会提高。");
+      startLoop();
+    }
+
+    function endGame() {
+      clearInterval(loopId);
+      running = false;
+      gameOver = true;
+      startButton.textContent = "再来一局";
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("luciffaSnakeBest", bestScore);
+        setStatus(`游戏结束！新纪录：${score} 分。`);
+      } else {
+        setStatus(`游戏结束！本局得分 ${score}。`);
+      }
+
+      updateHud();
+    }
+
+    function tick() {
+      direction = { ...nextDirection };
+
+      const newHead = {
+        x: snake[0].x + direction.x,
+        y: snake[0].y + direction.y
+      };
+
+      const hitWall =
+        newHead.x < 0 ||
+        newHead.x >= gridCount ||
+        newHead.y < 0 ||
+        newHead.y >= gridCount;
+
+      const ateFood = newHead.x === food.x && newHead.y === food.y;
+      const bodyToCheck = ateFood ? snake : snake.slice(0, -1);
+      const hitSelf = bodyToCheck.some(
+        part => part.x === newHead.x && part.y === newHead.y
+      );
+
+      if (hitWall || hitSelf) {
+        endGame();
+        return;
+      }
+
+      snake.unshift(newHead);
+
+      if (ateFood) {
+        score += 10;
+        food = createFood();
+        updateHud();
+        startLoop();
+      } else {
+        snake.pop();
+      }
+
+      draw();
+    }
+
+    function changeDirection(x, y) {
+      if (gameOver) resetGame("");
+
+      if (nextDirection.x + x === 0 && nextDirection.y + y === 0) {
+        return;
+      }
+
+      nextDirection = { x, y };
+
+      if (!running) startGame();
+    }
+
+    function togglePause() {
+      if (!running && !paused) {
+        setStatus("请先开始游戏。");
+        return;
+      }
+
+      if (paused) {
+        paused = false;
+        pauseButton.textContent = "暂停";
+        setStatus("游戏继续。");
+        startLoop();
+      } else {
+        paused = true;
+        clearInterval(loopId);
+        pauseButton.textContent = "继续";
+        setStatus("游戏已暂停。");
+      }
+    }
+
+    const directions = {
+      up: [0, -1],
+      down: [0, 1],
+      left: [-1, 0],
+      right: [1, 0]
+    };
+
+    document.querySelectorAll("[data-direction]").forEach(button => {
+      button.addEventListener("click", () => {
+        const [x, y] = directions[button.dataset.direction];
+        changeDirection(x, y);
+      });
+    });
+
+    window.addEventListener("keydown", event => {
+      const keyMap = {
+        ArrowUp: [0, -1],
+        ArrowDown: [0, 1],
+        ArrowLeft: [-1, 0],
+        ArrowRight: [1, 0],
+        w: [0, -1],
+        W: [0, -1],
+        s: [0, 1],
+        S: [0, 1],
+        a: [-1, 0],
+        A: [-1, 0],
+        d: [1, 0],
+        D: [1, 0]
+      };
+
+      if (keyMap[event.key]) {
+        event.preventDefault();
+        changeDirection(...keyMap[event.key]);
+      }
+
+      if (event.key === " ") {
+        event.preventDefault();
+        togglePause();
+      }
+    });
+
+    startButton.addEventListener("click", startGame);
+    pauseButton.addEventListener("click", togglePause);
+    document.getElementById("restart").addEventListener("click", () => {
+      resetGame("");
+      startGame();
+    });
+
+    resetGame();
+  </script>
+</body>
+</html>
