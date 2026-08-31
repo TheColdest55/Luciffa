@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>数独 · Luciffa Arcade</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: rgba(22, 29, 55, 0.84);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f5f7ff;
+      --muted: #a9b2d3;
+      --purple: #9b8cff;
+      --blue: #65d8ff;
+      --red: #ff7f9e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 12% 0%, #272260 0, transparent 28rem),
+        radial-gradient(circle at 90% 20%, #123c63 0, transparent 26rem),
+        var(--bg);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 0;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+    }
+
+    .logo span { color: var(--purple); }
+
+    .back {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .back:hover { color: var(--text); }
+
+    .heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      padding: 36px 0 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 7vw, 68px);
+      letter-spacing: -0.06em;
+    }
+
+    .heading p:last-child {
+      margin: 12px 0 0;
+      max-width: 560px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    button {
+      border: 0;
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .ghost-button {
+      padding: 12px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      white-space: nowrap;
+    }
+
+    .ghost-button:hover { border-color: var(--purple); }
+
+    .game-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 18px;
+      padding-bottom: 70px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+    }
+
+    .board-panel { padding: 18px; }
+
+    .game-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .game-meta strong { color: var(--text); }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      overflow: hidden;
+      border: 2px solid #93a0d4;
+      border-radius: 12px;
+      background: #111934;
+    }
+
+    .cell {
+      aspect-ratio: 1;
+      padding: 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: transparent;
+      color: var(--purple);
+      font-size: clamp(17px, 3vw, 25px);
+      font-weight: 700;
+    }
+
+    .cell:hover { background: rgba(155, 140, 255, 0.14); }
+    .cell.given { color: var(--text); }
+    .cell.entered { color: var(--blue); }
+    .cell.wrong { color: var(--red); }
+    .cell.related { background: rgba(120, 131, 194, 0.13); }
+    .cell.same { background: rgba(155, 140, 255, 0.17); }
+    .cell.selected {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .cell.right-edge { border-right: 2px solid #93a0d4; }
+    .cell.bottom-edge { border-bottom: 2px solid #93a0d4; }
+
+    .message {
+      min-height: 24px;
+      margin: 16px 4px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .side-panel { padding: 22px; }
+
+    .timer-label {
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .timer {
+      display: block;
+      margin: 7px 0 26px;
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+    }
+
+    .side-panel h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+    }
+
+    .number-pad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .number-pad button {
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--blue);
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .number-pad button:hover {
+      border-color: var(--purple);
+      background: rgba(155, 140, 255, 0.16);
+    }
+
+    .actions {
+      display: grid;
+      gap: 9px;
+      margin-top: 18px;
+    }
+
+    .actions button {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .actions button:hover {
+      color: var(--text);
+      border-color: var(--purple);
+    }
+
+    footer {
+      padding: 24px 0 34px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      header { padding: 20px 0; }
+      .heading { align-items: start; flex-direction: column; }
+      .game-layout { grid-template-columns: 1fr; }
+      .side-panel { display: grid; grid-template-columns: 1fr 1.4fr; gap: 18px; }
+      .side-panel h2 { margin-top: 4px; }
+      .number-pad { grid-column: 2; grid-row: 1 / span 2; }
+      .actions { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <a class="logo" href="index.html">luciffa<span>.</span></a>
+      <a class="back" href="index.html">← 返回游戏大厅</a>
+    </header>
+
+    <main>
+      <section class="heading">
+        <div>
+          <p class="eyebrow">01 · Logic</p>
+          <h1>数独</h1>
+          <p>选中空格后输入数字。每一行、每一列和每个九宫格都需要包含 1 到 9。</p>
+        </div>
+        <button class="ghost-button" id="new-game">换一局</button>
+      </section>
+
+      <section class="game-layout">
+        <article class="panel board-panel">
+          <div class="game-meta">
+            <span id="level">第 1 题 · 简单</span>
+            <span>错误 <strong id="mistakes">0</strong></span>
+          </div>
+          <div id="board" aria-label="数独棋盘"></div>
+          <div class="message" id="message" aria-live="polite">
+            选择一个空格后输入数字。
+          </div>
+        </article>
+
+        <aside class="panel side-panel">
+          <div>
+            <div class="timer-label">用时</div>
+            <strong class="timer" id="timer">00:00</strong>
+            <h2>填写数字</h2>
+          </div>
+
+          <div class="number-pad" id="number-pad">
+            <button data-number="1">1</button>
+            <button data-number="2">2</button>
+            <button data-number="3">3</button>
+            <button data-number="4">4</button>
+            <button data-number="5">5</button>
+            <button data-number="6">6</button>
+            <button data-number="7">7</button>
+            <button data-number="8">8</button>
+            <button data-number="9">9</button>
+          </div>
+
+          <div class="actions">
+            <button id="hint">提示一个数字</button>
+            <button id="reset">重新开始</button>
+            <button id="erase">清除所选格</button>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer>© 2026 Luciffa Arcade · Made for play.</footer>
+  </div>
+
+  <script>
+    const games = [
+      {
+        puzzle: [
+          [5,3,0,0,7,0,0,0,0],
+          [6,0,0,1,9,5,0,0,0],
+          [0,9,8,0,0,0,0,6,0],
+          [8,0,0,0,6,0,0,0,3],
+          [4,0,0,8,0,3,0,0,1],
+          [7,0,0,0,2,0,0,0,6],
+          [0,6,0,0,0,0,2,8,0],
+          [0,0,0,4,1,9,0,0,5],
+          [0,0,0,0,8,0,0,7,9]
+        ],
+        solution: [
+          [5,3,4,6,7,8,9,1,2],
+          [6,7,2,1,9,5,3,4,8],
+          [1,9,8,3,4,2,5,6,7],
+          [8,5,9,7,6,1,4,2,3],
+          [4,2,6,8,5,3,7,9,1],
+          [7,1,3,9,2,4,8,5,6],
+          [9,6,1,5,3,7,2,8,4],
+          [2,8,7,4,1,9,6,3,5],
+          [3,4,5,2,8,6,1,7,9]
+        ]
+      },
+      {
+        puzzle: [
+          [0,0,0,2,6,0,7,0,1],
+          [6,8,0,0,7,0,0,9,0],
+          [1,9,0,0,0,4,5,0,0],
+          [8,2,0,1,0,0,0,4,0],
+          [0,0,4,6,0,2,9,0,0],
+          [0,5,0,0,0,3,0,2,8],
+          [0,0,9,3,0,0,0,7,4],
+          [0,4,0,0,5,0,0,3,6],
+          [7,0,3,0,1,8,0,0,0]
+        ],
+        solution: [
+          [4,3,5,2,6,9,7,8,1],
+          [6,8,2,5,7,1,4,9,3],
+          [1,9,7,8,3,4,5,6,2],
+          [8,2,6,1,9,5,3,4,7],
+          [3,7,4,6,8,2,9,1,5],
+          [9,5,1,7,4,3,6,2,8],
+          [5,1,9,3,2,6,8,7,4],
+          [2,4,8,9,5,7,1,3,6],
+          [7,6,3,4,1,8,2,5,9]
+        ]
+      }
+    ];
+
+    const boardElement = document.getElementById("board");
+    const timerElement = document.getElementById("timer");
+    const mistakesElement = document.getElementById("mistakes");
+    const messageElement = document.getElementById("message");
+    const levelElement = document.getElementById("level");
+
+    let gameIndex = 0;
+    let puzzle = [];
+    let solution = [];
+    let state = [];
+    let selected = null;
+    let mistakes = 0;
+    let seconds = 0;
+    let timerId;
+    let finished = false;
+
+    function copyGrid(grid) {
+      return grid.map(row => [...row]);
+    }
+
+    function formatTime(totalSeconds) {
+      const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const secondsPart = String(totalSeconds % 60).padStart(2, "0");
+      return `${minutes}:${secondsPart}`;
+    }
+
+    function setMessage(text) {
+      messageElement.textContent = text;
+    }
+
+    function updateStats() {
+      timerElement.textContent = formatTime(seconds);
+      mistakesElement.textContent = mistakes;
+    }
+
+    function renderBoard() {
+      boardElement.innerHTML = "";
+      const selectedValue = selected ? state[selected[0]][selected[1]] : null;
+
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          const value = state[row][col];
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "cell";
+
+          if (puzzle[row][col] !== 0) {
+            cell.classList.add("given");
+          } else if (value !== 0 && value !== solution[row][col]) {
+            cell.classList.add("wrong");
+          } else if (value !== 0) {
+            cell.classList.add("entered");
+          }
+
+          if (col === 2 || col === 5) cell.classList.add("right-edge");
+          if (row === 2 || row === 5) cell.classList.add("bottom-edge");
+
+          if (selected) {
+            const [selectedRow, selectedCol] = selected;
+            const sameBox =
+              Math.floor(row / 3) === Math.floor(selectedRow / 3) &&
+              Math.floor(col / 3) === Math.floor(selectedCol / 3);
+
+            if (row === selectedRow || col === selectedCol || sameBox) {
+              cell.classList.add("related");
+            }
+
+            if (selectedValue !== 0 && value === selectedValue) {
+              cell.classList.add("same");
+            }
+
+            if (row === selectedRow && col === selectedCol) {
+              cell.classList.add("selected");
+            }
+          }
+
+          cell.textContent = value || "";
+          cell.setAttribute(
+            "aria-label",
+            `第 ${row + 1} 行，第 ${col + 1} 列，目前数字 ${value || "为空"}`
+          );
+
+          cell.addEventListener("click", () => {
+            selected = [row, col];
+            renderBoard();
+
+            if (puzzle[row][col] !== 0) {
+              setMessage("这是固定数字，不能修改。");
+            } else {
+              setMessage("可以使用数字键盘或电脑键盘输入 1 到 9。");
+            }
+          });
+
+          boardElement.appendChild(cell);
+        }
+      }
+    }
+
+    function checkComplete() {
+      const complete = state.every((row, rowIndex) =>
+        row.every((value, colIndex) => value === solution[rowIndex][colIndex])
+      );
+
+      if (complete) {
+        finished = true;
+        clearInterval(timerId);
+        setMessage(`完成！你用了 ${formatTime(seconds)}，共错误 ${mistakes} 次。`);
+        levelElement.textContent = "本局完成 ✓";
+      }
+    }
+
+    function enterNumber(number) {
+      if (finished) {
+        setMessage("这一局已经完成，点击“换一局”再玩一次。");
+        return;
+      }
+
+      if (!selected) {
+        setMessage("请先点击一个空格。");
+        return;
+      }
+
+      const [row, col] = selected;
+
+      if (puzzle[row][col] !== 0) {
+        setMessage("固定数字不能修改。");
+        return;
+      }
+
+      if (number === 0) {
+        state[row][col] = 0;
+        setMessage("已清除所选格。");
+      } else {
+        state[row][col] = number;
+
+        if (number === solution[row][col]) {
+          setMessage("正确。");
+        } else {
+          mistakes += 1;
+          setMessage("这个数字不对，可以重新填写。");
+        }
+      }
+
+      updateStats();
+      renderBoard();
+      checkComplete();
+    }
+
+    function showHint() {
+      if (finished) return;
+
+      let target = selected;
+
+      if (
+        !target ||
+        puzzle[target[0]][target[1]] !== 0 ||
+        state[target[0]][target[1]] === solution[target[0]][target[1]]
+      ) {
+        target = null;
+
+        for (let row = 0; row < 9 && !target; row++) {
+          for (let col = 0; col < 9; col++) {
+            if (
+              puzzle[row][col] === 0 &&
+              state[row][col] !== solution[row][col]
+            ) {
+              target = [row, col];
+              break;
+            }
+          }
+        }
+      }
+
+      if (!target) {
+        checkComplete();
+        return;
+      }
+
+      const [row, col] = target;
+      selected = target;
+      state[row][col] = solution[row][col];
+      setMessage("已为你填入一个正确数字。");
+      renderBoard();
+      checkComplete();
+    }
+
+    function loadGame(index) {
+      gameIndex = index;
+      puzzle = copyGrid(games[index].puzzle);
+      solution = copyGrid(games[index].solution);
+      state = copyGrid(puzzle);
+      selected = null;
+      mistakes = 0;
+      seconds = 0;
+      finished = false;
+
+      clearInterval(timerId);
+      timerId = setInterval(() => {
+        seconds += 1;
+        updateStats();
+      }, 1000);
+
+      levelElement.textContent = `第 ${index + 1} 题 · 简单`;
+      updateStats();
+      renderBoard();
+      setMessage("选择一个空格后输入数字。");
+    }
+
+    document.getElementById("number-pad").addEventListener("click", event => {
+      const button = event.target.closest("button[data-number]");
+      if (button) enterNumber(Number(button.dataset.number));
+    });
+
+    document.getElementById("erase").addEventListener("click", () => enterNumber(0));
+    document.getElementById("hint").addEventListener("click", showHint);
+    document.getElementById("reset").addEventListener("click", () => loadGame(gameIndex));
+    document.getElementById("new-game").addEventListener("click", () => {
+      loadGame((gameIndex + 1) % games.length);
+    });
+
+    window.addEventListener("keydown", event => {
+      if (/^[1-9]$/.test(event.key)) {
+        event.preventDefault();
+        enterNumber(Number(event.key));
+      }
+
+      if (event.key === "Backspace" || event.key === "Delete" || event.key === "0") {
+        event.preventDefault();
+        enterNumber(0);
+      }
+
+      const moves = {
+        ArrowUp: [-1, 0],
+        ArrowDown: [1, 0],
+        ArrowLeft: [0, -1],
+        ArrowRight: [0, 1]
+      };
+
+      if (moves[event.key]) {
+        event.preventDefault();
+
+        if (!selected) {
+          selected = [0, 0];
+        } else {
+          selected = [
+            (selected[0] + moves[event.key][0] + 9) % 9,
+            (selected[1] + moves[event.key][1] + 9) % 9
+          ];
+        }
+
+        renderBoard();
+      }
+    });
+
+    loadGame(0);
+  </script>
+</body>
+</html>
