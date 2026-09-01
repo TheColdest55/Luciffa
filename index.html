@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Luciffa Arcade 在线小游戏与聚会游戏教程。">
   <title>Luciffa Arcade</title>
-
   <style>
     :root {
       --bg: #090d1d;
       --surface: rgba(22, 29, 55, 0.82);
-      --surface-light: rgba(33, 42, 76, 0.72);
       --line: rgba(255, 255, 255, 0.11);
       --text: #f7f8ff;
       --muted: #aeb7d8;
@@ -18,13 +17,8 @@
       --yellow: #ffd36b;
     }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -57,9 +51,7 @@
       letter-spacing: -1px;
     }
 
-    .logo span {
-      color: var(--blue);
-    }
+    .logo span { color: var(--blue); }
 
     nav a {
       margin-left: 22px;
@@ -68,25 +60,22 @@
       font-size: 14px;
     }
 
-    nav a:hover {
-      color: white;
-    }
+    nav a:hover { color: white; }
 
-    .hero {
-      padding: 75px 0 65px;
-    }
+    .hero { padding: 75px 0 65px; }
 
-    .eyebrow {
-      display: inline-block;
-      margin-bottom: 18px;
+    .eyebrow,
+    .section-label,
+    .game-number,
+    .guide-type {
       color: var(--blue);
-      font-size: 13px;
-      letter-spacing: 2px;
+      font-size: 12px;
+      letter-spacing: 1.5px;
     }
 
     h1 {
       max-width: 780px;
-      margin: 0;
+      margin: 18px 0 0;
       font-size: clamp(44px, 8vw, 86px);
       line-height: 1.04;
       letter-spacing: -4px;
@@ -100,13 +89,8 @@
       line-height: 1.8;
     }
 
-    .section {
-      padding: 25px 0 75px;
-    }
-
-    .section + .section {
-      padding-top: 5px;
-    }
+    .section { padding: 25px 0 75px; }
+    .section + .section { padding-top: 5px; }
 
     .section-heading {
       display: flex;
@@ -116,17 +100,8 @@
       margin-bottom: 22px;
     }
 
-    .section-label {
-      margin-bottom: 8px;
-      color: var(--blue);
-      font-size: 12px;
-      letter-spacing: 1.5px;
-    }
-
-    .section-heading h2 {
-      margin: 0;
-      font-size: 28px;
-    }
+    .section-label { margin-bottom: 8px; }
+    .section-heading h2 { margin: 0; font-size: 28px; }
 
     .section-heading p {
       max-width: 470px;
@@ -154,10 +129,7 @@
       border: 1px solid var(--line);
       border-radius: 22px;
       background: var(--surface);
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
     }
 
     .game-card:hover {
@@ -166,16 +138,7 @@
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
     }
 
-    .game-number {
-      color: var(--blue);
-      font-size: 12px;
-      letter-spacing: 1.5px;
-    }
-
-    .game-card h3 {
-      margin: 21px 0 12px;
-      font-size: 32px;
-    }
+    .game-card h3 { margin: 21px 0 12px; font-size: 32px; }
 
     .game-card p {
       margin: 0;
@@ -193,10 +156,7 @@
       font-weight: 700;
     }
 
-    .play b {
-      font-size: 23px;
-      font-weight: 400;
-    }
+    .play b { font-size: 23px; font-weight: 400; }
 
     .guide-board {
       overflow: hidden;
@@ -209,31 +169,14 @@
 
     .guide-grid {
       display: grid;
-      grid-template-columns: 1.45fr 0.75fr;
+      grid-template-columns: 1.45fr .75fr;
     }
 
-    .guide-column {
-      padding: 29px;
-    }
+    .guide-column { padding: 29px; }
 
-    .guide-column + .guide-column {
-      border-left: 1px solid var(--line);
-    }
-
-    .guide-type {
-      color: var(--purple);
-      font-size: 12px;
-      letter-spacing: 1.5px;
-    }
-
-    .guide-column.cards .guide-type {
-      color: var(--blue);
-    }
-
-    .guide-column h3 {
-      margin: 13px 0 9px;
-      font-size: 27px;
-    }
+    .guide-column + .guide-column { border-left: 1px solid var(--line); }
+    .guide-column:first-child .guide-type { color: var(--purple); }
+    .guide-column h3 { margin: 13px 0 9px; font-size: 27px; }
 
     .guide-column p {
       margin: 0 0 22px;
@@ -252,9 +195,20 @@
       padding: 8px 12px;
       color: #e8ebff;
       font-size: 13px;
-      border: 1px solid rgba(255, 255, 255, 0.09);
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.11);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.06);
+      transition: transform .18s ease, color .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .chip:hover,
+    .chip:focus-visible {
+      transform: translateY(-2px);
+      color: white;
+      border-color: rgba(104, 220, 255, .55);
+      background: rgba(104, 220, 255, .11);
+      outline: none;
     }
 
     .guide-status {
@@ -267,14 +221,13 @@
       background: rgba(8, 12, 29, 0.34);
     }
 
-    .guide-status strong {
+    .guide-status span { color: var(--muted); font-size: 13px; }
+
+    .guide-status a {
       color: var(--yellow);
       font-size: 14px;
-    }
-
-    .guide-status span {
-      color: var(--muted);
-      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
     }
 
     footer {
@@ -285,63 +238,25 @@
     }
 
     @media (max-width: 760px) {
-      header {
-        padding: 20px 0;
-      }
-
-      nav a {
-        margin-left: 13px;
-      }
-
-      .hero {
-        padding: 55px 0 45px;
-      }
-
-      h1 {
-        letter-spacing: -2px;
-      }
-
-      .section-heading {
-        display: block;
-      }
-
-      .section-heading p {
-        margin-top: 12px;
-        text-align: left;
-      }
-
-      .game-grid,
-      .guide-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .game-card {
-        min-height: 235px;
-      }
-
-      .guide-column + .guide-column {
-        border-top: 1px solid var(--line);
-        border-left: 0;
-      }
-
-      .guide-status {
-        display: block;
-      }
-
-      .guide-status span {
-        display: block;
-        margin-top: 7px;
-      }
+      header { padding: 20px 0; }
+      nav a { margin-left: 13px; }
+      .hero { padding: 55px 0 45px; }
+      h1 { letter-spacing: -2px; }
+      .section-heading { display: block; }
+      .section-heading p { margin-top: 12px; text-align: left; }
+      .game-grid, .guide-grid { grid-template-columns: 1fr; }
+      .game-card { min-height: 235px; }
+      .guide-column + .guide-column { border-top: 1px solid var(--line); border-left: 0; }
+      .guide-status { display: block; }
+      .guide-status a { display: inline-block; margin-top: 10px; }
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <header>
       <a class="logo" href="index.html">luciffa<span>.</span></a>
-
-      <nav>
+      <nav aria-label="主导航">
         <a href="#online-games">在线游戏</a>
         <a href="#game-guides">游戏教程</a>
       </nav>
@@ -351,11 +266,7 @@
       <section class="hero">
         <div class="eyebrow">LUCIFFA ARCADE</div>
         <h1>玩点有意思的。</h1>
-
-        <p>
-          这里收集可以直接游玩的网页小游戏，
-          也会整理一些适合朋友聚会的游戏与经典棋牌教程。
-        </p>
+        <p>这里收集可以直接游玩的网页小游戏，也整理适合朋友聚会的游戏与经典棋牌教程。</p>
       </section>
 
       <section class="section" id="online-games">
@@ -364,7 +275,6 @@
             <div class="section-label">PLAY ONLINE</div>
             <h2>在线小游戏</h2>
           </div>
-
           <p>无需下载，打开网页即可开始游戏。</p>
         </div>
 
@@ -375,11 +285,7 @@
               <h3>数独</h3>
               <p>填满九宫格，锻炼逻辑。支持提示、计时和完成检测。</p>
             </div>
-
-            <div class="play">
-              开始游戏
-              <b>→</b>
-            </div>
+            <div class="play">开始游戏 <b>→</b></div>
           </a>
 
           <a class="game-card" href="snake.html">
@@ -388,11 +294,7 @@
               <h3>贪吃蛇</h3>
               <p>控制小蛇收集食物、不断成长，挑战自己的最高分。</p>
             </div>
-
-            <div class="play">
-              开始游戏
-              <b>→</b>
-            </div>
+            <div class="play">开始游戏 <b>→</b></div>
           </a>
         </div>
       </section>
@@ -403,8 +305,7 @@
             <div class="section-label">GAME GUIDES</div>
             <h2>聚会与棋牌教程</h2>
           </div>
-
-          <p>从快速酒桌游戏到完整的经典牌类规则，之后会逐个整理。</p>
+          <p>点击游戏名称，直接跳到对应教程。</p>
         </div>
 
         <div class="guide-board">
@@ -413,46 +314,42 @@
               <div class="guide-type">PARTY GAMES · 12 项</div>
               <h3>酒桌快玩</h3>
               <p>适合朋友聚会、规则简单、可以快速开始。</p>
-
               <div class="chips">
-                <span class="chip">十五二十</span>
-                <span class="chip">逢七过</span>
-                <span class="chip">数字炸弹</span>
-                <span class="chip">大话骰</span>
-                <span class="chip">逛三园</span>
-                <span class="chip">舞拳</span>
-                <span class="chip">我有你没有</span>
-                <span class="chip">小姐牌</span>
-                <span class="chip">大姐牌</span>
-                <span class="chip">金字塔</span>
-                <span class="chip">过三关</span>
-                <span class="chip">抓老二</span>
+                <a class="chip" href="game-guides.html#fifteen-twenty">十五二十</a>
+                <a class="chip" href="game-guides.html#pass-seven">逢七过</a>
+                <a class="chip" href="game-guides.html#number-bomb">数字炸弹</a>
+                <a class="chip" href="game-guides.html#liars-dice">大话骰</a>
+                <a class="chip" href="game-guides.html#three-gardens">逛三园</a>
+                <a class="chip" href="game-guides.html#dance-fist">舞拳</a>
+                <a class="chip" href="game-guides.html#i-have-you-dont">我有你没有</a>
+                <a class="chip" href="game-guides.html#miss-card">小姐牌</a>
+                <a class="chip" href="game-guides.html#big-sister-card">大姐牌</a>
+                <a class="chip" href="game-guides.html#pyramid">金字塔</a>
+                <a class="chip" href="game-guides.html#three-gates">过三关</a>
+                <a class="chip" href="game-guides.html#catch-second">抓老二</a>
               </div>
             </div>
 
-            <div class="guide-column cards">
+            <div class="guide-column">
               <div class="guide-type">CARD GAMES · 2 项</div>
               <h3>经典棋牌</h3>
-              <p>规则较完整，后续会制作单独的新手教程。</p>
-
+              <p>规则更完整，适合收藏后慢慢学习。</p>
               <div class="chips">
-                <span class="chip">斗地主</span>
-                <span class="chip">掼蛋</span>
+                <a class="chip" href="game-guides.html#dou-dizhu">斗地主</a>
+                <a class="chip" href="game-guides.html#guandan">掼蛋</a>
               </div>
             </div>
           </div>
 
           <div class="guide-status">
-            <strong>教程合集正在整理中</strong>
-            <span>下一步再确定教程目录和页面结构</span>
+            <span>每个按钮都会打开并定位到对应规则</span>
+            <a href="game-guides.html">查看全部教程 →</a>
           </div>
         </div>
       </section>
     </main>
 
-    <footer>
-      © 2026 Luciffa Arcade · Made for play.
-    </footer>
+    <footer>© 2026 Luciffa Arcade · Made for play.</footer>
   </div>
 </body>
 </html>
