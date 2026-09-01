@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Luciffa Arcade 聚会游戏与经典棋牌新手教程。">
+  <title>游戏教程 · Luciffa Arcade</title>
+  <style>
+    :root {
+      --bg: #090d1d;
+      --surface: rgba(22, 29, 55, .88);
+      --surface-2: rgba(31, 40, 72, .76);
+      --line: rgba(255, 255, 255, .11);
+      --text: #f7f8ff;
+      --muted: #aeb7d8;
+      --purple: #a18cff;
+      --blue: #68dcff;
+      --yellow: #ffd36b;
+      --green: #79e6b3;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Microsoft YaHei", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 12% 5%, rgba(119, 91, 255, .21), transparent 26%),
+        radial-gradient(circle at 90% 12%, rgba(64, 198, 255, .14), transparent 24%),
+        var(--bg);
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(980px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--line);
+      background: rgba(9, 13, 29, .86);
+      backdrop-filter: blur(16px);
+    }
+
+    .header-inner {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .logo {
+      color: white;
+      text-decoration: none;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span { color: var(--blue); }
+
+    .home-link {
+      color: var(--muted);
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .home-link:hover { color: white; }
+
+    .hero { padding: 66px 0 34px; }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      letter-spacing: 1.8px;
+    }
+
+    h1 {
+      margin: 15px 0 17px;
+      font-size: clamp(40px, 7vw, 66px);
+      letter-spacing: -3px;
+    }
+
+    .hero > p {
+      max-width: 680px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .notice {
+      margin-top: 26px;
+      padding: 15px 17px;
+      color: #dfe4ff;
+      font-size: 14px;
+      line-height: 1.7;
+      border: 1px solid rgba(161, 140, 255, .34);
+      border-radius: 14px;
+      background: rgba(161, 140, 255, .09);
+    }
+
+    .quick-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: var(--surface);
+    }
+
+    .quick-nav a {
+      padding: 7px 11px;
+      color: #e8ebff;
+      font-size: 13px;
+      text-decoration: none;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .quick-nav a:hover,
+    .quick-nav a:focus-visible {
+      color: white;
+      border-color: rgba(104, 220, 255, .55);
+      background: rgba(104, 220, 255, .1);
+      outline: none;
+    }
+
+    .group-heading {
+      margin: 58px 0 18px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .group-heading span {
+      color: var(--purple);
+      font-size: 12px;
+      letter-spacing: 1.5px;
+    }
+
+    .group-heading h2 { margin: 8px 0 0; font-size: 27px; }
+
+    .guide-list { display: grid; gap: 18px; }
+
+    .guide-card {
+      scroll-margin-top: 94px;
+      padding: 27px;
+      border: 1px solid var(--line);
+      border-radius: 21px;
+      background:
+        linear-gradient(135deg, rgba(161, 140, 255, .06), transparent 40%),
+        var(--surface);
+      transition: border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .guide-card:target {
+      border-color: rgba(104, 220, 255, .82);
+      box-shadow: 0 0 0 4px rgba(104, 220, 255, .08), 0 20px 55px rgba(0, 0, 0, .25);
+    }
+
+    .guide-card h2 {
+      margin: 12px 0 8px;
+      font-size: 30px;
+    }
+
+    .intro {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta span,
+    .version {
+      display: inline-block;
+      padding: 5px 9px;
+      color: #dfe4ff;
+      font-size: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .07);
+    }
+
+    .version {
+      margin-top: 16px;
+      color: #f7e2a7;
+      background: rgba(255, 211, 107, .1);
+    }
+
+    .guide-card h3 {
+      margin: 23px 0 9px;
+      color: white;
+      font-size: 17px;
+    }
+
+    ol, ul {
+      margin: 0;
+      padding-left: 22px;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    li + li { margin-top: 5px; }
+
+    .tip {
+      margin-top: 20px;
+      padding: 13px 15px;
+      color: #dce3ff;
+      font-size: 14px;
+      line-height: 1.7;
+      border-left: 3px solid var(--green);
+      border-radius: 0 11px 11px 0;
+      background: rgba(121, 230, 179, .08);
+    }
+
+    .source {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: #818cb5;
+      font-size: 12px;
+    }
+
+    .source a { color: #98dfff; text-decoration: none; }
+    .source a:hover { text-decoration: underline; }
+
+    .rules-table {
+      width: 100%;
+      margin-top: 13px;
+      border-collapse: collapse;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .rules-table th,
+    .rules-table td {
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      border: 1px solid var(--line);
+    }
+
+    .rules-table th {
+      width: 78px;
+      color: white;
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .back-top {
+      display: inline-block;
+      margin: 35px 0 55px;
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    footer {
+      padding: 25px 0 35px;
+      color: #7e88ad;
+      font-size: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 640px) {
+      .container { width: min(100% - 28px, 980px); }
+      .hero { padding-top: 44px; }
+      h1 { letter-spacing: -2px; }
+      .guide-card { padding: 21px; }
+      .guide-card h2 { font-size: 27px; }
+      .rules-table { font-size: 13px; }
+      .rules-table th, .rules-table td { padding: 9px; }
+    }
+  </style>
+</head>
+<body id="top">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html">luciffa<span>.</span></a>
+      <a class="home-link" href="index.html#game-guides">← 返回首页</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="eyebrow">LUCIFFA GAME GUIDES</div>
+      <h1>聚会与棋牌教程</h1>
+      <p>每篇教程采用容易开局的新手版本。存在地方规则差异的游戏，会在开局前提醒大家先统一规则。</p>
+      <div class="notice">游戏中的“惩罚”可以使用积分、饮料或轻松挑战代替。所有人都可以选择不饮酒；不劝酒，饮酒后不驾车。</div>
+    </section>
+
+    <nav class="quick-nav" aria-label="教程快速导航">
+      <a href="#fifteen-twenty">十五二十</a>
+      <a href="#pass-seven">逢七过</a>
+      <a href="#number-bomb">数字炸弹</a>
+      <a href="#liars-dice">大话骰</a>
+      <a href="#three-gardens">逛三园</a>
+      <a href="#dance-fist">舞拳</a>
+      <a href="#i-have-you-dont">我有你没有</a>
+      <a href="#miss-card">小姐牌</a>
+      <a href="#big-sister-card">大姐牌</a>
+      <a href="#pyramid">金字塔</a>
+      <a href="#three-gates">过三关</a>
+      <a href="#catch-second">抓老二</a>
+      <a href="#dou-dizhu">斗地主</a>
+      <a href="#guandan">掼蛋</a>
+    </nav>
+
+    <section>
+      <div class="group-heading">
+        <span>PARTY GAMES</span>
+        <h2>酒桌快玩</h2>
+      </div>
+
+      <div class="guide-list">
+        <article class="guide-card" id="fifteen-twenty">
+          <div class="meta"><span>2 人</span><span>无需道具</span><span>约 3 分钟</span></div>
+          <h2>十五二十</h2>
+          <p class="intro">双方同时出手并猜两个人手指数量的总和，是最经典的数字拳之一。</p>
+          <h3>玩法一：轮流喊数</h3>
+          <ol>
+            <li>每个人同时使用两只手：双手握拳代表 0，伸开一只手代表 5，双手伸开代表 10。</li>
+            <li>进攻方出手的同时喊出 0、5、10、15、20 中的一个数字。</li>
+            <li>如果喊出的数字等于双方手势总和，进攻方猜中；否则换对方喊。</li>
+            <li>常见规则是连续猜中两次才赢一局，也可以约定猜中一次即胜。</li>
+          </ol>
+          <h3>玩法二：双方同时喊数</h3>
+          <ol>
+            <li>两个人同时出手，并同时喊出 0、5、10、15、20 中的一个数字。</li>
+            <li>只有一方喊中双方手势总和时，喊中的一方直接获胜。</li>
+            <li>双方同时喊中时，本轮不分胜负，继续下一轮。</li>
+            <li>双方都没喊中时，同样继续下一轮，直到有且只有一方喊中。</li>
+          </ol>
+          <div class="tip">开局前先约定采用哪种玩法；轮流喊数时，还要约定猜中一次还是连续两次获胜。</div>
+          <div class="source">参考：<a href="https://zh.wikipedia.org/wiki/%E6%95%B8%E5%AD%97%E6%8B%B3" target="_blank" rel="noopener noreferrer">数字拳规则</a></div>
+        </article>
+
+        <article class="guide-card" id="pass-seven">
+          <div class="meta"><span>3 人以上</span><span>无需道具</span><span>反应类</span></div>
+          <h2>逢七过</h2>
+          <p class="intro">按顺序报数，碰到和 7 有关的数字时不能直接说出来。</p>
+          <h3>玩法</h3>
+          <ol>
+            <li>从 1 开始，所有人按座位顺序依次报数。</li>
+            <li>遇到 7 的倍数，或数字中含有 7，例如 7、14、17、21、27，要拍手或说“过”。</li>
+            <li>说错数字、该拍手时报数、重复或停顿太久，都算本轮失误。</li>
+            <li>失误后可以从 1 重新开始，也可以从任意数字继续。</li>
+          </ol>
+          <div class="tip">熟练后可以加入“拍手后反转方向”，难度会明显提高。</div>
+          <div class="source">参考：<a href="https://www.bilibili.com/video/BV1Ju4y1j7dR/" target="_blank" rel="noopener noreferrer">逢七过玩法示例</a></div>
+        </article>
+
+        <article class="guide-card" id="number-bomb">
+          <div class="meta"><span>2 人以上</span><span>手机或纸笔</span><span>猜数字</span></div>
+          <h2>数字炸弹</h2>
+          <p class="intro">在不断缩小的范围内猜数字，猜中隐藏数字的人“踩中炸弹”。</p>
+          <h3>玩法</h3>
+          <ol>
+            <li>主持人在 1～100 中确定一个秘密数字，不能让其他人看到。</li>
+            <li>玩家轮流在当前范围内猜一个数字。</li>
+            <li>主持人回答秘密数字更大或更小，并立即缩小有效范围。</li>
+            <li>例如秘密数字为 63，有人猜 40 后，范围变成 41～100；再猜 80，范围变成 41～79。</li>
+            <li>最终猜中秘密数字的人本轮失败，然后更换主持人开始下一局。</li>
+          </ol>
+          <div class="tip">人数多时可把范围扩大到 1～500；想更快结束则使用 1～50。</div>
+          <div class="source">参考：<a href="https://app.ali213.net/news/205585.html" target="_blank" rel="noopener noreferrer">数字炸弹规则介绍</a></div>
+        </article>
+
+        <article class="guide-card" id="liars-dice">
+          <div class="meta"><span>2 人以上</span><span>每人 5 颗骰子和骰盅</span><span>心理博弈</span></div>
+          <h2>大话骰</h2>
+          <p class="intro">玩家只能看到自己的骰子，通过叫数、加码和质疑判断全场骰子数量。</p>
+          <h3>玩法</h3>
+          <ol>
+            <li>所有人同时摇骰，只查看自己骰盅里的结果，并对其他人保密。</li>
+            <li>第一位玩家叫“X 个 Y”，例如“三个 4”，表示他认为全场至少有三个 4。</li>
+            <li>下一位必须提高叫法，例如增加数量，或在相同数量下提高点数；也可以直接喊“开”。</li>
+            <li>有人喊开后，全体亮骰。如果实际数量达到叫数，质疑者输；没有达到，则上一位叫数者输。</li>
+            <li>可采用输一轮减少一颗骰子的计分法，最后仍有骰子的玩家获胜。</li>
+          </ol>
+          <div class="tip">常见玩法把 1 当作万能点数，但叫过 1 后是否继续万能，各地规则不同，开局必须先说清楚。</div>
+          <div class="source">参考：<a href="https://zh.wikipedia.org/wiki/%E5%A4%A7%E8%A9%B1%E9%AA%B0" target="_blank" rel="noopener noreferrer">大话骰规则</a></div>
+        </article>
+
+        <article class="guide-card" id="three-gardens">
+          <div class="meta"><span>3 人以上</span><span>无需道具</span><span>接龙类</span></div>
+          <h2>逛三园</h2>
+          <p class="intro">围绕一个类别快速接龙，考验知识量和临场反应。</p>
+          <h3>玩法</h3>
+          <ol>
+            <li>发起人说：“星期天，逛三园，什么园？”</li>
+            <li>下一位选择一个类别，例如水果园、动物园、汽车园或电影园。</li>
+            <li>随后每个人依次说出一个属于该类别的项目。</li>
+            <li>内容重复、不属于类别、超过约定时间没有回答，都算失误。</li>
+            <li>失误者接受一次挑战，并负责选择下一轮的类别。</li>
+          </ol>
+          <div class="tip">类别最好至少能说出十个答案，太窄的类别容易让游戏立刻结束。</div>
+          <div class="source">参考：<a href="https://apps.apple.com/cn/app/%E9%80%9B%E4%B8%89%E5%9B%AD/id1638657596" target="_blank" rel="noopener noreferrer">逛三园玩法说明</a></div>
+        </article>
+
+        <article class="guide-card" id="dance-fist">
+          <div class="meta"><span>2 人</span><span>无需道具</span><span>节奏猜拳</span></div>
+          <h2>舞拳</h2>
+          <p class="intro">把节拍动作、石头剪刀布和方向判断连在一起的双人反应游戏。</p>
+          <div class="version">采用常见的“猜拳＋上下左右指向”版本。</div>
+          <h3>玩法</h3>
+          <ol>
+            <li>两人面对面，先按统一节拍完成四拍甩手或拍手动作。</li>
+            <li>节拍结束后，同时出石头、剪刀或布。</li>
+            <li>猜拳平局时，直接重新按节拍猜拳。</li>
+            <li>猜拳分出胜负后，胜利者和落败者都同时用手指向上、下、左、右中的一个方向。</li>
+            <li>两人所指方向相同，猜拳落败者输掉本轮；方向不同则重新开始。</li>
+          </ol>
+          <div class="tip">方向环节双方都用手指出方向，不需要转头。不同地区的前奏拍数可以自行约定。</div>
+          <div class="source">参考：<a href="https://www.youtube.com/watch?v=hc_-P8RkV4M" target="_blank" rel="noopener noreferrer">舞拳动作教学示例</a></div>
+        </article>
+
+        <article class="guide-card" id="i-have-you-dont">
+          <div class="meta"><span>4 人以上</span><span>无需道具</span><span>破冰聊天</span></div>
+          <h2>我有你没有</h2>
+          <p class="intro">轮流说一件自己做过、认为别人没做过的事情，用手指记录剩余机会。</p>
+          <h3>玩法</h3>
+          <ol>
+            <li>每个人伸出五根或十根手指，代表自己的生命值。</li>
+            <li>玩家轮流说：“我有……的经历，你们没有。”内容必须真实。</li>
+            <li>其他没有做过这件事的人放下一根手指；做过的人保持不动。</li>
+            <li>手指最先全部放下的人出局，最后仍有手指的人获胜。</li>
+          </ol>
+          <div class="tip">不讨论隐私、违法经历或可能让别人不舒服的话题；任何人都可以跳过问题。</div>
+          <div class="source">参考：<a href="https://club.wku.edu.cn/news/detail/281" target="_blank" rel="noopener noreferrer">我有你没有活动规则</a></div>
+        </article>
+
+        <article class="guide-card" id="miss-card">
+          <div class="meta"><span>4 人以上</span><span>一副扑克牌</span><span>指令牌</span></div>
+          <h2>小姐牌</h2>
+          <p class="intro">去掉大小王后轮流抽牌，每个点数对应一个即时任务或可保留的能力。</p>
+          <div class="version">牌义没有全国统一标准，下表采用常见网络版本。</div>
+          <table class="rules-table">
+            <tr><th>A</th><td>代罚牌：需要接受挑战时，可指定另一人代替一次。</td></tr>
+            <tr><th>2</th><td>小姐牌：抽到者获得“陪伴角色”，直到下一张 2 出现。</td></tr>
+            <tr><th>3</th><td>逛三园：指定类别后依次接龙，重复或答不出者失败。</td></tr>
+            <tr><th>4</th><td>照相机：持牌者可突然喊“照相机”，所有人定格，先动者失败。</td></tr>
+            <tr><th>5</th><td>免罚牌：可以抵消一次挑战。</td></tr>
+            <tr><th>6</th><td>摸鼻子：持牌者随时摸鼻子，最后跟着摸的人失败。</td></tr>
+            <tr><th>7</th><td>逢七过：开始一轮含 7 或 7 的倍数拍手的数字接龙。</td></tr>
+            <tr><th>8</th><td>离席牌：可获得一次暂停或离席权。</td></tr>
+            <tr><th>9</th><td>抽到者自己接受一次挑战。</td></tr>
+            <tr><th>10</th><td>神经病：别人不能回答持牌者的问题，回应者失败。</td></tr>
+            <tr><th>J</th><td>抽牌者左边的人接受一次挑战。</td></tr>
+            <tr><th>Q</th><td>抽牌者右边的人接受一次挑战。</td></tr>
+            <tr><th>K</th><td>累计牌：第一张 K 设定数量，后续抽到 K 的人按约定执行。</td></tr>
+          </table>
+          <div class="tip">涉及陪伴、离席或代罚的指令必须尊重本人意愿，可以统一改成扣分。</div>
+          <div class="source">参考：<a href="https://www.yele365.com/topic/788" target="_blank" rel="noopener noreferrer">小姐牌常见牌义</a></div>
+        </article>
+
+        <article class="guide-card" id="big-sister-card">
+          <div class="meta"><span>4 人以上</span><span>一副扑克牌</span><span>独立变体</span></div>
+          <h2>大姐牌</h2>
+          <p class="intro">大姐牌与小姐牌不是同一套规则，核心是“大姐裁定”、组合任务和持续绑定。</p>
+          <div class="version">采用目前较常见的网络流传版；开局前应逐张确认牌义。</div>
+          <table class="rules-table">
+            <tr><th>A</th><td>盲选牌：随机选中一名玩家，由牌桌给出一个友好小挑战。</td></tr>
+            <tr><th>2</th><td>红色 2 为小姐；黑色 2 为大姐。大姐可裁定请求、解除绑定或修改一次任务。</td></tr>
+            <tr><th>3</th><td>N＋1 园：回答时先重复上一人的答案，再增加一个新项目。</td></tr>
+            <tr><th>4</th><td>对战牌：抽牌者选择一人与自己玩任意一轮小游戏，失败者受罚。</td></tr>
+            <tr><th>5</th><td>抱团牌：持牌者突然喊人数，大家按该人数抱团，落单者失败。</td></tr>
+            <tr><th>6</th><td>扭一扭：从“一棵柳树扭一扭”开始逐人增加数量，卡顿或说错者失败。</td></tr>
+            <tr><th>7</th><td>五七反应：遇到 5 的相关数字摇头，遇到 7 的相关数字拍手。</td></tr>
+            <tr><th>8</th><td>铁锁连环：选择另一人绑定；一人接受挑战时另一人也记一次，需由大姐解除。</td></tr>
+            <tr><th>9</th><td>抽牌者自己接受一次挑战。</td></tr>
+            <tr><th>10</th><td>美杜莎：所有人先低头，再同时抬头看一人；互相对视者失败。</td></tr>
+            <tr><th>J</th><td>右边的人接受挑战。</td></tr>
+            <tr><th>Q</th><td>左边的人接受挑战。</td></tr>
+            <tr><th>K</th><td>规则牌：抽牌者制定一条持续规则，下一张 K 出现时替换。</td></tr>
+          </table>
+          <div class="tip">大姐牌流传时间较短、版本差异尤其大。这一页记录的是可直接开局的整理版，不宣称是唯一规则。</div>
+          <div class="source">参考：<a href="https://zh.wikipedia.org/wiki/%E9%99%AA%E9%85%92%E5%93%A1" target="_blank" rel="noopener noreferrer">大姐牌变体资料</a></div>
+        </article>
+
+        <article class="guide-card" id="pyramid">
+          <div class="meta"><span>3 人以上</span><span>一副扑克牌</span><span>记忆与 bluff</span></div>
+          <h2>金字塔</h2>
+          <p class="intro">把牌摆成金字塔逐层翻开，玩家利用手牌匹配牌点并分配挑战，也可以尝试虚张声势。</p>
+          <div class="version">采用四层、共十张金字塔的常见版本。</div>
+          <h3>准备</h3>
+          <ol>
+            <li>去掉大小王，把十张牌面朝下摆成 4、3、2、1 的四层金字塔。</li>
+            <li>每位玩家发四张手牌，查看并记住后面朝下放在自己面前。</li>
+          </ol>
+          <h3>玩法</h3>
+          <ol>
+            <li>从最底层开始，每次翻开一张金字塔牌。</li>
+            <li>如果玩家声称自己的手牌中有相同点数，就能把本层对应数量的挑战分配给别人：底层 1 次，向上依次 2、3、4 次。</li>
+            <li>被指定者可以接受，也可以质疑。被质疑者翻开手牌验证。</li>
+            <li>声明属实，质疑者承担；声明不实，虚张声势者承担。</li>
+            <li>所有金字塔牌翻完后结束。</li>
+          </ol>
+          <div class="source">参考：<a href="https://toz-app.com/zh-Hant/blog/card-games/pyramid-drinking-game" target="_blank" rel="noopener noreferrer">金字塔喝酒游戏</a></div>
+        </article>
+
+        <article class="guide-card" id="three-gates">
+          <div class="meta"><span>2 人以上</span><span>一副扑克牌</span><span>连续猜牌</span></div>
+          <h2>过三关</h2>
+          <p class="intro">连续完成猜颜色、猜大小和猜区间三项判断，三关全部正确才算过关。</p>
+          <div class="version">“过三关”名称有多种含义，本页采用扑克牌猜牌版。</div>
+          <h3>玩法</h3>
+          <ol>
+            <li>第一关：发牌前猜下一张是红色还是黑色，猜完后翻开第一张。</li>
+            <li>第二关：猜第二张比第一张大还是小，然后翻牌；相同点数可约定重抽。</li>
+            <li>第三关：猜第三张的点数位于前两张之间还是区间之外，然后翻牌。</li>
+            <li>三关全部正确即成功；任意一关失败，本轮结束并轮到下一位。</li>
+          </ol>
+          <div class="tip">A 算最大还是最小、点数相同时怎么处理，都应在开局前统一。</div>
+          <div class="source">参考：<a href="https://toz-app.com/zh-Hans/games/red-or-black" target="_blank" rel="noopener noreferrer">猜红黑／大小／区间玩法</a></div>
+        </article>
+
+        <article class="guide-card" id="catch-second">
+          <div class="meta"><span>3 人以上</span><span>一副扑克牌</span><span>五张牌比牌</span></div>
+          <h2>抓老二</h2>
+          <p class="intro">所有人使用五张牌比大小，第一名获胜，而排名第二的人是本轮主要目标。</p>
+          <div class="version">采用目前网络“抓二游”的简化线下版，不等同于大老二。</div>
+          <h3>玩法</h3>
+          <ol>
+            <li>去掉大小王，给每位玩家发五张牌。</li>
+            <li>玩家整理自己的五张牌型，然后同时亮牌。</li>
+            <li>牌型从大到小采用：同花顺、四条、葫芦、同花、顺子、三条、两对、对子、散牌。</li>
+            <li>牌型相同时，依次比较组成牌型的主要点数，再比较剩余大牌。</li>
+            <li>最高者为头游；第二高者为“老二”，承担本轮约定的挑战。</li>
+          </ol>
+          <div class="tip">网上“抓二游”计分随平台变化。这一版只保留“第二名被抓”的核心，不涉及下注或倍数。</div>
+          <div class="source">参考：<a href="https://appshunter.io/events/6752013156" target="_blank" rel="noopener noreferrer">抓二游玩法介绍</a></div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="group-heading">
+        <span>CARD GAMES</span>
+        <h2>经典棋牌</h2>
+      </div>
+
+      <div class="guide-list">
+        <article class="guide-card" id="dou-dizhu">
+          <div class="meta"><span>3 人</span><span>54 张牌</span><span>阵营对抗</span></div>
+          <h2>斗地主</h2>
+          <p class="intro">一名地主对阵两名农民，任意一方率先出完手牌即获胜。</p>
+          <h3>准备与阵营</h3>
+          <ol>
+            <li>使用一副含大小王的 54 张牌，每位玩家先获得 17 张，剩余 3 张作为底牌。</li>
+            <li>通过叫分或叫地主确定地主；地主获得三张底牌，另外两人组成农民阵营。</li>
+            <li>地主先出牌，之后按顺序轮流出牌。</li>
+          </ol>
+          <h3>基本牌型</h3>
+          <ul>
+            <li>单张、对子、三张、三带一、三带二。</li>
+            <li>顺子至少五张，连对至少三对；2 和王不能进入顺子。</li>
+            <li>飞机由连续三张组成，可按规则带相同数量的单牌或对子。</li>
+            <li>四张相同点数是炸弹；大小王组成火箭，为最大牌型。</li>
+          </ul>
+          <h3>压牌与胜负</h3>
+          <ol>
+            <li>通常只能用张数相同、类型相同且更大的牌压过上一手。</li>
+            <li>炸弹可以压普通牌型，更大的炸弹可继续压；火箭最大。</li>
+            <li>不想出或无法压牌可以选择不要。其余两家都不要时，最后出牌者开启新一轮。</li>
+            <li>地主先出完则地主胜；任意农民先出完则农民阵营共同获胜。</li>
+          </ol>
+          <div class="source">参考：<a href="https://zh.wikipedia.org/wiki/%E9%AC%A5%E5%9C%B0%E4%B8%BB" target="_blank" rel="noopener noreferrer">三人斗地主规则概览</a></div>
+        </article>
+
+        <article class="guide-card" id="guandan">
+          <div class="meta"><span>4 人</span><span>两副牌</span><span>两人组队</span></div>
+          <h2>掼蛋</h2>
+          <p class="intro">四人分成两队，对家为队友；在跑牌基础上加入级牌、配牌、升级和进贡。</p>
+          <div class="version">以下是帮助新手开局的简化说明，正式比赛还包含更细的判罚规则。</div>
+          <h3>准备</h3>
+          <ol>
+            <li>使用两副完整扑克牌，共 108 张，每人 27 张。</li>
+            <li>相对而坐的两人是一队。</li>
+            <li>首局通常从打 2 开始，当前所打点数称为“级牌”。</li>
+          </ol>
+          <h3>牌的大小与牌型</h3>
+          <ul>
+            <li>大王、小王和级牌属于较大的特殊牌；红桃级牌通常可作为“逢人配”代替其他普通牌。</li>
+            <li>常见牌型有单张、对子、三张、三带二、顺子、连对、钢板、炸弹和同花顺。</li>
+            <li>一般牌型需用相同类型的更大牌压；炸弹和同花顺拥有更高压制能力。</li>
+          </ul>
+          <h3>出牌、排名和升级</h3>
+          <ol>
+            <li>玩家依次出牌，可以压过上一手或选择不要。</li>
+            <li>其余玩家都不要后，最后出牌者获得下一轮首出权。</li>
+            <li>按出完手牌顺序分为头游、二游、三游和末游。</li>
+            <li>头游与二游若为同队，通常升三级；头游与三游同队通常升两级；头游与末游同队通常升一级。</li>
+            <li>下一副可能进行进贡、还贡或抗贡，然后继续升级，先打过 A 的队获胜。</li>
+          </ol>
+          <div class="tip">掼蛋地方规则较多，尤其是顺子范围、同花顺与炸弹大小、报牌和进贡细节；正式对局建议采用同一份竞赛规则。</div>
+          <div class="source">参考：<a href="https://www.sport.gov.cn/qpzx/n27319064/n27319058/c27429584/content.html" target="_blank" rel="noopener noreferrer">国家体育总局棋牌中心掼蛋赛事资料</a></div>
+        </article>
+      </div>
+    </section>
+
+    <a class="back-top" href="#top">↑ 返回顶部</a>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 Luciffa Arcade · Rules may vary by group.</div>
+  </footer>
+</body>
+</html>
